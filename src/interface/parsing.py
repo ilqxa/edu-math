@@ -28,9 +28,10 @@ def str_recognize(text: str) -> Element | Operator:
         poss = [text.find(sign) for sign in ops.keys()]
         pos = min((p for p in poss if p > 0), default=-1)
         if pos >= 0:
+            fields = list(ops[text[pos]].model_fields.keys())
             return ops[text[pos]].model_validate({
-                'left': str_recognize(text[:pos]),
-                'right': str_recognize(text[pos+1:]),
+                fields[0]: str_recognize(text[:pos]),
+                fields[1]: str_recognize(text[pos+1:]),
             })
     # Parse element
     try: val = float(text)
