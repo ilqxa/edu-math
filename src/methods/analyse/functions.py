@@ -1,5 +1,5 @@
-from src.objects.operators.base import Operator
 from src.objects.elements.variables import ScalarVariable
+from src.objects.operators.base import Operator
 
 
 def extract_scalar_variables(func: Operator) -> set[ScalarVariable]:
