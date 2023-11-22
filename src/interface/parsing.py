@@ -25,8 +25,7 @@ operations: dict[int, dict[str, type[Operator]]] = {
 def str_recognize(text: str) -> Element | Operator:
     # Detect the operator
     for _, ops in operations.items():
-        poss = [text.find(sign) for sign in ops.keys()]
-        pos = min((p for p in poss if p > 0), default=-1)
+        pos = max(text.find(sign) for sign in ops.keys())
         if pos >= 0:
             fields = list(ops[text[pos]].model_fields.keys())
             return ops[text[pos]].model_validate({
