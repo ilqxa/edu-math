@@ -1,8 +1,8 @@
 from src.objects.elements.base import Element
 
 
-class ScalarVariable(Element):
-    label: str
+class FloatConstant(Element):
+    value: float
     
     def __str__(self) -> str:
-        return self.label
+        return str(self.value)

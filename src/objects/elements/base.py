@@ -1,9 +1,9 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from pydantic import BaseModel
 
 
 class Element(ABC, BaseModel):
-    label: str
     
+    @abstractmethod
     def __str__(self) -> str:
-        return self.label
+        ...
