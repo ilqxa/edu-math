@@ -1,6 +1,6 @@
-from src.api.parsing import str_recognize
+from src.api.parsing import recognize_string
 
 
 def test_recognition():
-    recognized = str_recognize('4+3*x^2')
+    recognized = recognize_string('4+3*x^2')
     assert recognized.__str__() == '4.0+3.0*x^2.0'
