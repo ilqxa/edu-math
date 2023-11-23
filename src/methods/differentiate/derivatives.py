@@ -20,21 +20,21 @@ def fix_other_variables(func: Operator, acceptedVariable: ScalarVariable) -> Ope
     return func.__class__.model_validate(params)
 
 
-def differentiate_addition(func: Addition) -> Element | Operator:
+def differentiate_addition(func: Addition) -> Addition:
     return Addition(
         addend1=analytic_differentiate(func.addend1),
         addend2=analytic_differentiate(func.addend2),
     )
 
 
-def differentiate_subtraction(func: Subtraction) -> Element | Operator:
+def differentiate_subtraction(func: Subtraction) -> Subtraction:
     return Subtraction(
         minuend=analytic_differentiate(func.minuend),
         subtrahend=analytic_differentiate(func.subtrahend),
     )
 
 
-def differentiate_multiplication(func: Multiplication) -> Element | Operator:
+def differentiate_multiplication(func: Multiplication) -> Addition:
     return Addition(
         addend1=Multiplication(
             multiplier1=analytic_differentiate(func.multiplier1),
@@ -47,7 +47,7 @@ def differentiate_multiplication(func: Multiplication) -> Element | Operator:
     )
 
 
-def differentiate_division(func: Division) -> Element | Operator:
+def differentiate_division(func: Division) -> Division:
     return Division(
         dividend=Subtraction(
             minuend=Multiplication(
@@ -65,6 +65,21 @@ def differentiate_division(func: Division) -> Element | Operator:
         ),
     )
 
+def differentiate_power(func: Power) -> Multiplication:
+    return Multiplication(
+        multiplier1=func.power,
+        multiplier2=Multiplication(
+            multiplier1=Power(
+                base=func.base,
+                power=Subtraction(
+                    minuend=func.power,
+                    subtrahend=FloatConstant(value=-1.),
+                ),
+            ),
+            multiplier2=analytic_differentiate(func.base),
+        ),
+    )
+
 
 def analytic_differentiate(obj: Element | Operator) -> Element | Operator:
     if isinstance(obj, Constant): return FloatConstant(value=0.)
@@ -73,4 +88,5 @@ def analytic_differentiate(obj: Element | Operator) -> Element | Operator:
     elif isinstance(obj, Subtraction): return differentiate_subtraction(obj)
     elif isinstance(obj, Multiplication): return differentiate_multiplication(obj)
     elif isinstance(obj, Division): return differentiate_division(obj)
+    elif isinstance(obj, Power): return differentiate_power(obj)
     else: raise NotImplementedError
