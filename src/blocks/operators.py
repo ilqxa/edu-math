@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 
 from pydantic import BaseModel, Field
 
-from .elements import Element, NumberConstant, ScalarVariable
+from .elements import Element, NumericConstant, ScalarVariable
 
 
 class Operator(ABC, BaseModel):
@@ -53,7 +53,7 @@ class Operator(ABC, BaseModel):
     
     @abstractmethod
     def derivative(self, var: ScalarVariable | None) -> Element | Operator:
-        if var is None: return NumberConstant(value=0.)
+        if var is None: return NumericConstant(value=0.)
         else: raise NotImplementedError
 
 
@@ -67,8 +67,8 @@ class Addition(Operator):
     def evaluate(self) -> Element | Operator:
         addend1 = self.addend1.evaluate()
         addend2 = self.addend2.evaluate()
-        if isinstance(addend1, NumberConstant) and isinstance(addend2, NumberConstant):
-            return NumberConstant(value=addend1.value+addend2.value)
+        if isinstance(addend1, NumericConstant) and isinstance(addend2, NumericConstant):
+            return NumericConstant(value=addend1.value+addend2.value)
         else:
             return Addition(
             addend1=addend1,
@@ -92,8 +92,8 @@ class Subtraction(Operator):
     def evaluate(self) -> Element | Operator:
         minuend = self.minuend.evaluate()
         subtrahend = self.subtrahend.evaluate()
-        if isinstance(minuend, NumberConstant) and isinstance(subtrahend, NumberConstant):
-            return NumberConstant(value=minuend.value-subtrahend.value)
+        if isinstance(minuend, NumericConstant) and isinstance(subtrahend, NumericConstant):
+            return NumericConstant(value=minuend.value-subtrahend.value)
         else:
             return Subtraction(
                 minuend=minuend,
@@ -101,7 +101,7 @@ class Subtraction(Operator):
             )
     
     def derivative(self, var: ScalarVariable | None) -> Element | Operator:
-        if var is None: return NumberConstant(value=0.)
+        if var is None: return NumericConstant(value=0.)
         return Subtraction(
             minuend=self.minuend.derivative(var),
             subtrahend=self.subtrahend.derivative(var),
@@ -118,8 +118,8 @@ class Multiplication(Operator):
     def evaluate(self) -> Element | Operator:
         multiplier1 = self.multiplier1.evaluate()
         multiplier2 = self.multiplier2.evaluate()
-        if isinstance(multiplier1, NumberConstant) and isinstance(multiplier2, NumberConstant):
-            return NumberConstant(value=multiplier1.value*multiplier2.value)
+        if isinstance(multiplier1, NumericConstant) and isinstance(multiplier2, NumericConstant):
+            return NumericConstant(value=multiplier1.value*multiplier2.value)
         else:
             return Multiplication(
                 multiplier1=multiplier1,
@@ -127,7 +127,7 @@ class Multiplication(Operator):
             )
     
     def derivative(self, var: ScalarVariable | None) -> Element | Operator:
-        if var is None: return NumberConstant(value=0.)
+        if var is None: return NumericConstant(value=0.)
         return Addition(
             addend1=Multiplication(
                 multiplier1=self.multiplier1.derivative(var),
@@ -150,8 +150,8 @@ class Division(Operator):
     def evaluate(self) -> Element | Operator:
         dividend = self.dividend.evaluate()
         divisor = self.divisor.evaluate()
-        if isinstance(dividend, NumberConstant) and isinstance(divisor, NumberConstant):
-            return NumberConstant(value=dividend.value/divisor.value)
+        if isinstance(dividend, NumericConstant) and isinstance(divisor, NumericConstant):
+            return NumericConstant(value=dividend.value/divisor.value)
         else:
             return Division(
                 dividend=dividend,
@@ -159,7 +159,7 @@ class Division(Operator):
             )
     
     def derivative(self, var: ScalarVariable | None) -> Element | Operator:
-        if var is None: return NumberConstant(value=0.)
+        if var is None: return NumericConstant(value=0.)
         return Division(
         dividend=Subtraction(
             minuend=Multiplication(
@@ -173,7 +173,7 @@ class Division(Operator):
         ),
         divisor=Power(
             base=self.divisor,
-            power=NumberConstant(value=2.),
+            power=NumericConstant(value=2.),
         ),
     )
 
@@ -188,8 +188,8 @@ class Power(Operator):
     def evaluate(self) -> Element | Operator:
         base = self.base.evaluate()
         power = self.power.evaluate()
-        if isinstance(base, NumberConstant) and isinstance(power, NumberConstant):
-            return NumberConstant(value=base.value**power.value)
+        if isinstance(base, NumericConstant) and isinstance(power, NumericConstant):
+            return NumericConstant(value=base.value**power.value)
         else:
             return Power(
                 base=base,
@@ -197,7 +197,7 @@ class Power(Operator):
             )
     
     def derivative(self, var: ScalarVariable | None) -> Element | Operator:
-        if var is None: return NumberConstant(value=0.)
+        if var is None: return NumericConstant(value=0.)
         return Multiplication(
         multiplier1=self.power,
         multiplier2=Multiplication(
@@ -205,7 +205,7 @@ class Power(Operator):
                 base=self.base,
                 power=Subtraction(
                     minuend=self.power,
-                    subtrahend=NumberConstant(value=-1.),
+                    subtrahend=NumericConstant(value=-1.),
                 ),
             ),
             multiplier2=self.base.derivative(var),

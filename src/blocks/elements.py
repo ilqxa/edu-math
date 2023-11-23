@@ -12,24 +12,24 @@ class Element(ABC, BaseModel):
         ...
     
     @abstractmethod
-    def derivative(self, var: ScalarVariable | None) -> NumberConstant:
-        if var is None: return NumberConstant(value=0.)
+    def derivative(self, var: ScalarVariable | None) -> NumericConstant:
+        if var is None: return NumericConstant(value=0.)
         else: raise NotImplementedError
 
 class Constant(Element):
     ...
 
-class NumberConstant(Constant):
+class NumericConstant(Constant):
     value: float
     
     def __str__(self) -> str:
         return str(self.value)
 
-    def evaluate(self) -> NumberConstant:
+    def evaluate(self) -> NumericConstant:
         return self
     
-    def derivative(self, var: ScalarVariable | None) -> NumberConstant:
-        return NumberConstant(value=0.)
+    def derivative(self, var: ScalarVariable | None) -> NumericConstant:
+        return NumericConstant(value=0.)
     
 
 class ScalarVariable(Element):
@@ -44,6 +44,6 @@ class ScalarVariable(Element):
     def evaluate(self) -> ScalarVariable:
         return self
     
-    def derivative(self, var: ScalarVariable | None) -> NumberConstant:
-        if var is None: return NumberConstant(value=0.)
-        return NumberConstant(value=1.) if var == self else NumberConstant(value=0.)
+    def derivative(self, var: ScalarVariable | None) -> NumericConstant:
+        if var is None: return NumericConstant(value=0.)
+        return NumericConstant(value=1.) if var == self else NumericConstant(value=0.)

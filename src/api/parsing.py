@@ -28,4 +28,4 @@ def str_recognize(text: str) -> Element | Operator:
     # Parse element
     try: val = float(text)
     except: return ScalarVariable(label=text)
-    else: return NumberConstant(value=val)
+    else: return NumericConstant(value=val)

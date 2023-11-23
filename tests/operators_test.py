@@ -13,10 +13,16 @@ def test_extraction_variables():
     assert func.addend2.multiplier2.base in res
 
 
-def test_constant_expression_eval():
+def test_eval_constant_expression():
     func = str_recognize('2+2')
     res = func.evaluate()
     assert res.__str__() == '4.0'
+
+
+def test_eval_complex_expression():
+    func = str_recognize('2+2*2')
+    res = func.evaluate()
+    assert res.__str__() == '6.0'
 
 
 def test_variable_expression_eval():
