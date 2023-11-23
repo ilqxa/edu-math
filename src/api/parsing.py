@@ -1,11 +1,4 @@
-import re
-
-from src.objects.elements.base import Element
-from src.objects.elements.constants import FloatConstant
-from src.objects.elements.variables import ScalarVariable
-from src.objects.operators.base import Operator
-from src.objects.operators.arithmetic import *
-
+from src.blocks.operators import *
 
 operations: dict[int, dict[str, type[Operator]]] = {
     1: {
@@ -35,4 +28,4 @@ def str_recognize(text: str) -> Element | Operator:
     # Parse element
     try: val = float(text)
     except: return ScalarVariable(label=text)
-    else: return FloatConstant(value=val)
+    else: return NumberConstant(value=val)

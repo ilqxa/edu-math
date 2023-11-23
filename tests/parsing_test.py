@@ -1,4 +1,4 @@
-from src.interface.parsing import str_recognize
+from src.api.parsing import str_recognize
 
 
 def test_recognition():
