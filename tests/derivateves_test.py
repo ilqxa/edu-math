@@ -1,6 +1,6 @@
 from src.interface.parsing import str_recognize
 from src.methods.analyse.functions import extract_scalar_variables
-from src.methods.differentiate.derivatives import fix_other_variables, find_derivative
+from src.methods.differentiate.derivatives import fix_other_variables, differentiate_operator
 from src.objects.operators.base import Operator
 
 
@@ -17,26 +17,26 @@ def test_fix_variables():
 def test_constant_derivative():
     func = str_recognize('2+2')
     assert isinstance(func, Operator)
-    der = find_derivative(func)
+    der = differentiate_operator(func)
     assert der.__str__() == '0.0'
 
 
 def test_one_var_derivative():
     func = str_recognize('2+x')
     assert isinstance(func, Operator)
-    der = find_derivative(func)
+    der = differentiate_operator(func)
     assert der.__str__() == '1.0'
 
 
 def test_three_additions():
     func = str_recognize('2+x+2')
     assert isinstance(func, Operator)
-    der = find_derivative(func)
+    der = differentiate_operator(func)
     assert der.__str__() == '1.0'
 
 
 def test_four_additions():
     func = str_recognize('2+x+2+x')
     assert isinstance(func, Operator)
-    der = find_derivative(func)
-    assert der.__str__() == '1.0'
+    der = differentiate_operator(func)
+    assert der.__str__() == '1.0+1.0'
